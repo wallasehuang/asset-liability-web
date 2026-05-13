@@ -8,6 +8,8 @@ import { PageIntro } from "@/components/page-intro";
 import { formatCurrency, formatMonthLong } from "@/lib/finance";
 import { getDashboardSummary } from "@/lib/data";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const dashboard = await getDashboardSummary();
   const latestMonthLabel = dashboard.latestSnapshot ? formatMonthLong(new Date(dashboard.latestSnapshot.snapshotDate)) : null;

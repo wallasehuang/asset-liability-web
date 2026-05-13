@@ -2,6 +2,8 @@ import { PageIntro } from "@/components/page-intro";
 import { SnapshotList } from "@/components/snapshots/snapshot-list";
 import { getSnapshots } from "@/lib/data";
 
+export const dynamic = "force-dynamic";
+
 export default async function SnapshotsPage() {
   const snapshots = await getSnapshots();
 

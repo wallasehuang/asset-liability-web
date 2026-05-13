@@ -3,7 +3,10 @@ set -eu
 
 mkdir -p /app/data
 
+echo "[startup] Applying database migrations..."
 npx prisma migrate deploy
+echo "[startup] Seeding baseline data..."
 npm run db:seed
 
-exec npx next start --hostname 0.0.0.0 --port "${PORT:-3000}"
+echo "[startup] Starting web server on port ${PORT:-3000}..."
+exec node server.js

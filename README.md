@@ -75,3 +75,53 @@ npm run db:seed
 - `docker-compose.yml`
 
 目前容器啟動時會自動執行 migration 與 seed。
+
+## 部署執行
+
+最簡單的部署方式是直接使用 Docker Compose:
+
+```bash
+docker compose up -d --build
+```
+
+如果主機上的 `3000` 已被占用，可以改用其他 port:
+
+```bash
+APP_PORT=3001 docker compose up -d --build
+```
+
+目前 compose 已預設把 SQLite 資料庫直接映射到專案下的 `data/` 資料夾:
+
+```bash
+mkdir -p data
+docker compose up -d --build
+```
+
+啟動後可使用下列方式確認狀態:
+
+```bash
+docker compose ps
+curl http://localhost:3000/api/health
+```
+
+如果你有指定 `APP_PORT`，請把 `3000` 改成對應的 port。
+
+停止服務:
+
+```bash
+docker compose down
+```
+
+如果要連同資料 volume 一起清除:
+
+```bash
+docker compose down -v
+```
+
+## 部署說明
+
+- 容器首次啟動會自動套用 Prisma migrations
+- 容器每次啟動都會執行 idempotent seed，確保基礎主檔存在
+- SQLite 資料會直接保存在專案目錄下的 `data/app.db`
+- 健康檢查端點為 `/api/health`
+- 預設對外服務埠為 `3000`

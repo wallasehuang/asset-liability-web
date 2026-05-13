@@ -2,6 +2,8 @@ import { MasterDataManager } from "@/components/forms/master-data-manager";
 import { PageIntro } from "@/components/page-intro";
 import { getMasterData } from "@/lib/data";
 
+export const dynamic = "force-dynamic";
+
 export default async function MasterDataPage() {
   const masterData = await getMasterData();
 

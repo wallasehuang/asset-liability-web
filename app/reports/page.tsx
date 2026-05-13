@@ -3,6 +3,8 @@ import { PageIntro } from "@/components/page-intro";
 import { ReportsSnapshotList } from "@/components/reports/reports-snapshot-list";
 import { getReportsSummary } from "@/lib/data";
 
+export const dynamic = "force-dynamic";
+
 export default async function ReportsPage() {
   const { snapshots, latestSnapshotId, categoryBreakdown } = await getReportsSummary();
 
