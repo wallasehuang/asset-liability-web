@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum EntryType {
+  asset
+  liability
+}
+
+enum Currency {
+  TWD
+  USD
+}
+
+enum SnapshotStatus {
+  draft
+  final
+}
+
+model Category {
+  id              String          @id @default(cuid())
+  type            EntryType
+  code            String          @unique
+  name            String
+  sortOrder       Int             @default(0)
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  items           Item[]
+  snapshotEntries SnapshotEntry[]
+}
+
+model Item {
+  id              String          @id @default(cuid())
+  categoryId      String
+  category        Category        @relation(fields: [categoryId], references: [id])
+  name            String
+  institution     String?
+  currency        Currency
+  sortOrder       Int             @default(0)
+  isActive        Boolean         @default(true)
+  note            String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  snapshotEntries SnapshotEntry[]
+}
+
+model Snapshot {
+  id           String          @id @default(cuid())
+  snapshotDate DateTime        @unique
+  status       SnapshotStatus  @default(draft)
+  usdFxRate    Float           @default(31.5)
+  note         String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  entries      SnapshotEntry[]
+}
+
+model SnapshotEntry {
+  id             String    @id @default(cuid())
+  snapshotId     String
+  snapshot       Snapshot  @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  itemId         String?
+  item           Item?     @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  categoryId     String?
+  category       Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  entryType      EntryType
+  categoryCode   String
+  categoryName   String
+  itemName       String
+  institution    String?
+  currency       Currency
+  amountOriginal Float     @default(0)
+  fxRate         Float     @default(1)
+  amountTwd      Float     @default(0)
+  sortOrder      Int       @default(0)
+  note           String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([snapshotId, entryType, sortOrder])
+}
