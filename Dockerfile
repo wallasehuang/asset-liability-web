@@ -9,6 +9,7 @@ RUN npm ci
 FROM base AS builder
 WORKDIR /app
 ENV DATABASE_URL=file:/tmp/build.db
+ENV TZ=UTC
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npx prisma generate
@@ -20,6 +21,7 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV DATABASE_URL=file:/app/data/app.db
 ENV HOSTNAME=0.0.0.0
+ENV TZ=UTC
 COPY --from=builder /app/package.json /app/package-lock.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next/standalone ./

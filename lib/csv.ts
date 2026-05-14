@@ -1,3 +1,4 @@
+import { snapshotDateToDateOnly } from "@/lib/finance";
 import type { SnapshotDetailRecord } from "@/lib/types";
 
 function escapeCell(value: string | number) {
@@ -24,7 +25,7 @@ export function buildSnapshotCsv(snapshot: SnapshotDetailRecord) {
   ];
 
   const rows = snapshot.entries.map((entry) => [
-    snapshot.snapshotDate.slice(0, 10),
+    snapshotDateToDateOnly(snapshot.snapshotDate),
     entry.entryType,
     entry.categoryCode,
     entry.categoryName,

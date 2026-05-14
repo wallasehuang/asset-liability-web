@@ -32,7 +32,7 @@ export function SnapshotList({ snapshots: initialSnapshots }: SnapshotListProps)
     () =>
       snapshots.map((snapshot) => ({
         id: snapshot.id,
-        label: formatMonthLong(new Date(snapshot.snapshotDate)),
+        label: formatMonthLong(snapshot.snapshotDate),
         usdFxRate: snapshot.usdFxRate,
       })),
     [snapshots],
@@ -138,7 +138,7 @@ export function SnapshotList({ snapshots: initialSnapshots }: SnapshotListProps)
                 {snapshot.status === "draft" ? "草稿" : "定稿"}
               </div>
               <div className="font-display text-[28px] leading-none tracking-[0.05em] md:text-[30px]">
-                {formatMonthLong(new Date(snapshot.snapshotDate))}
+                {formatMonthLong(snapshot.snapshotDate)}
               </div>
               <div className="text-[12px] leading-6 text-[var(--color-muted)]">
                 標準匯率 USD/TWD {snapshot.usdFxRate.toFixed(4)}

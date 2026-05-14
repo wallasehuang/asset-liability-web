@@ -1,5 +1,12 @@
 import { buildSnapshotCsv } from "@/lib/csv";
-import { calculateAmountTwd, getVariance, summarizeEntries } from "@/lib/finance";
+import {
+  calculateAmountTwd,
+  formatMonthLong,
+  getVariance,
+  monthInputToSnapshotDate,
+  snapshotDateToMonthInput,
+  summarizeEntries,
+} from "@/lib/finance";
 
 describe("finance helpers", () => {
   it("calculates TWD amount with rounding", () => {
@@ -22,6 +29,16 @@ describe("finance helpers", () => {
 
   it("computes month-over-month variance", () => {
     expect(getVariance(120000, 100500)).toBe(19500);
+  });
+
+  it("stores snapshot month end in UTC", () => {
+    expect(monthInputToSnapshotDate("2026-02").toISOString()).toBe("2026-02-28T00:00:00.000Z");
+  });
+
+  it("formats snapshot months consistently across time zones", () => {
+    const snapshotDate = "2026-02-28T23:59:59.999Z";
+    expect(snapshotDateToMonthInput(snapshotDate)).toBe("2026-02");
+    expect(formatMonthLong(snapshotDate)).toBe("2026 年 02 月");
   });
 
   it("exports snapshot csv with ordered columns", () => {

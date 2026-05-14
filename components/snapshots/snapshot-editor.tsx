@@ -174,7 +174,7 @@ export function SnapshotEditor({ snapshot, items }: SnapshotEditorProps) {
               label="Snapshot"
               value={
                 <div className="font-display text-[28px] leading-none tracking-[0.04em] md:text-[32px]">
-                  {formatMonthLong(new Date(snapshot.snapshotDate))}
+                  {formatMonthLong(snapshot.snapshotDate)}
                 </div>
               }
               variant="plain"
@@ -187,7 +187,7 @@ export function SnapshotEditor({ snapshot, items }: SnapshotEditorProps) {
             <div className="grid gap-1.5">
               <div className="text-[11px] uppercase tracking-[0.24em] text-[var(--color-muted)]">Snapshot</div>
               <div className="font-display text-[27px] leading-none tracking-[0.04em] md:text-[31px]">
-                {formatMonthLong(new Date(snapshot.snapshotDate))}
+                {formatMonthLong(snapshot.snapshotDate)}
               </div>
             </div>
             <div className="grid gap-1.5">

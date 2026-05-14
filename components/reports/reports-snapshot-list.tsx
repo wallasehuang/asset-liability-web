@@ -29,7 +29,7 @@ export function ReportsSnapshotList({ snapshots, latestSnapshotId }: ReportsSnap
       {pagedSnapshots.map((snapshot) => (
         <div key={snapshot.id} className="design-list-card grid gap-2.5 border border-[var(--color-line)] bg-[var(--color-surface)] p-4 md:grid-cols-[1fr_auto] md:items-start">
           <div className="grid gap-2">
-            <div className="text-[15px] font-semibold">{formatMonthLong(new Date(snapshot.snapshotDate))}</div>
+            <div className="text-[15px] font-semibold">{formatMonthLong(snapshot.snapshotDate)}</div>
             <div className="text-[12px] text-[var(--color-muted)]">
               淨資產 {formatCurrency(snapshot.netWorth)} / 總資產 {formatCurrency(snapshot.totalAssets)} / 總負債 {formatCurrency(snapshot.totalLiabilities)}
             </div>

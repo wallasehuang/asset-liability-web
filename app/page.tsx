@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const dashboard = await getDashboardSummary();
-  const latestMonthLabel = dashboard.latestSnapshot ? formatMonthLong(new Date(dashboard.latestSnapshot.snapshotDate)) : null;
+  const latestMonthLabel = dashboard.latestSnapshot ? formatMonthLong(dashboard.latestSnapshot.snapshotDate) : null;
 
   return (
     <div className="grid gap-10">
@@ -30,7 +30,7 @@ export default async function DashboardPage() {
           value={dashboard.latestSnapshot?.netWorth ?? 0}
           hint={
             dashboard.latestSnapshot
-              ? `最新月結 ${formatMonthLong(new Date(dashboard.latestSnapshot.snapshotDate))}`
+              ? `最新月結 ${formatMonthLong(dashboard.latestSnapshot.snapshotDate)}`
               : "尚未建立任何月結"
           }
           accent

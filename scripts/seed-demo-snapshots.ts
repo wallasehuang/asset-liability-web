@@ -1,7 +1,7 @@
 import { Currency, PrismaClient, SnapshotStatus } from "@prisma/client";
-import { addMonths, endOfMonth, format } from "date-fns";
+import { addMonths } from "date-fns";
 
-import { calculateAmountTwd, roundCurrency } from "../lib/finance";
+import { calculateAmountTwd, monthInputToSnapshotDate, roundCurrency, snapshotDateToMonthInput } from "../lib/finance";
 
 const prisma = new PrismaClient();
 const MONTH_TOTAL = 24;
@@ -10,7 +10,7 @@ const START_MONTH = new Date("2024-06-01T00:00:00+08:00");
 type ItemWithCategory = Awaited<ReturnType<typeof loadItems>>[number];
 
 function formatKey(date: Date) {
-  return format(date, "yyyy-MM");
+  return snapshotDateToMonthInput(date);
 }
 
 function usdRateForMonth(offset: number) {
@@ -118,7 +118,8 @@ async function main() {
   const hydratedMonths: string[] = [];
 
   for (let offset = 0; offset < MONTH_TOTAL; offset += 1) {
-    const snapshotDate = endOfMonth(addMonths(START_MONTH, offset));
+    const snapshotMonth = snapshotDateToMonthInput(addMonths(START_MONTH, offset));
+    const snapshotDate = monthInputToSnapshotDate(snapshotMonth);
     const monthKey = formatKey(snapshotDate);
     const usdFxRate = usdRateForMonth(offset);
     const entries = items

@@ -1,8 +1,17 @@
 import { Prisma, SnapshotStatus } from "@prisma/client";
-import { endOfMonth, subMonths } from "date-fns";
 
 import { buildSnapshotCsv } from "@/lib/csv";
-import { calculateAmountTwd, formatMonthLabel, getVariance, monthInputToSnapshotDate, summarizeEntries } from "@/lib/finance";
+import {
+  calculateAmountTwd,
+  formatMonthLabel,
+  getVariance,
+  monthInputToSnapshotDate,
+  monthInputToSnapshotRange,
+  shiftMonthInput,
+  snapshotDateToMonthInput,
+  summarizeEntries,
+  toMonthInput,
+} from "@/lib/finance";
 import { prisma } from "@/lib/prisma";
 import type {
   CategoryRecord,
@@ -283,7 +292,7 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
     previousSnapshot,
     monthChange,
     trend: trendSnapshots.map((snapshot) => ({
-      label: formatMonthLabel(new Date(snapshot.snapshotDate)),
+      label: formatMonthLabel(snapshot.snapshotDate),
       date: snapshot.snapshotDate,
       totalAssets: snapshot.totalAssets,
       totalLiabilities: snapshot.totalLiabilities,
@@ -324,10 +333,16 @@ export async function getReportsSummary() {
 
 export async function createSnapshot(month: string, sourceSnapshotId?: string | null, note?: string, usdFxRate?: number) {
   const snapshotDate = monthInputToSnapshotDate(month);
+  const snapshotRange = monthInputToSnapshotRange(month);
 
   return prisma.$transaction(async (transaction) => {
-    const existing = await transaction.snapshot.findUnique({
-      where: { snapshotDate },
+    const existing = await transaction.snapshot.findFirst({
+      where: {
+        snapshotDate: {
+          gte: snapshotRange.start,
+          lt: snapshotRange.end,
+        },
+      },
     });
 
     if (existing) {
@@ -523,7 +538,7 @@ export async function getNetWorthTrend() {
     .slice(0, 12)
     .reverse()
     .map((snapshot) => ({
-      label: formatMonthLabel(new Date(snapshot.snapshotDate)),
+      label: formatMonthLabel(snapshot.snapshotDate),
       totalAssets: snapshot.totalAssets,
       totalLiabilities: snapshot.totalLiabilities,
       netWorth: snapshot.netWorth,
@@ -558,11 +573,12 @@ export async function getDashboardMonthOptions() {
     select: { snapshotDate: true },
   });
 
-  const anchor = latest?.snapshotDate ?? new Date();
+  const anchorMonth = latest ? snapshotDateToMonthInput(latest.snapshotDate) : toMonthInput(new Date());
   return [0, 1, 2, 3, 4, 5].map((offset) => {
-    const date = endOfMonth(subMonths(anchor, offset));
+    const month = shiftMonthInput(anchorMonth, -offset);
+    const date = monthInputToSnapshotDate(month);
     return {
-      label: formatMonthLabel(date),
+      label: formatMonthLabel(month),
       value: date.toISOString(),
     };
   });
